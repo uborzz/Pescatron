@@ -10,10 +10,22 @@ imgtest = np.zeros((h,w,3), np.uint8)
 cv2.namedWindow("image")
 c = 0
 
-lower_red = np.array([13,50,50])
-upper_red = np.array([167,255,255])
+# # general
+# lower_red = np.array([13,50,50])
+# upper_red = np.array([167,255,255])
+
+# # nag
+# lower_red = np.array([5,5,5])
+# upper_red = np.array([175,255,255])
+
+# enh
+lower_red_1 = np.array([169,85,85])
+upper_red_1 = np.array([180,230,230])
+lower_red_2 = np.array([0,85,85])
+upper_red_2 = np.array([11,230,230])
 
 estado = 'inicio'
+esperando = 0
 
 while (1):
 
@@ -27,12 +39,9 @@ while (1):
     cv2.imshow("image", img)
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, lower_red, upper_red)
 
-    mask2 = cv2.bitwise_not(mask)
-    cv2.imshow("image3", mask2)
-
-    # print mask2
+    mask2 = cv2.bitwise_or(cv2.inRange(hsv, lower_red_1, upper_red_1),cv2.inRange(hsv, lower_red_2, upper_red_2))
+    cv2.imshow("mask", mask2)
 
     if c == 1 and estado == 'inicio':
         img2 = mask2
@@ -41,10 +50,11 @@ while (1):
         cv2.waitKey(3000)
         autopy.mouse.move(660+600, 200+300)
 
-    resta = mask2-img2
+    resta = mask2-img2 # old
 
-    kernel = np.ones((3,3),np.uint8)
-    erosion = cv2.erode(resta,kernel,iterations = 1)
+    kernel = np.ones((3,3),np.uint8)   # OLD 3x3
+    erosion = cv2.erode(resta,kernel,iterations = 1) # old
+    # erosion = cv2.morphologyEx(resta,cv2.MORPH_OPEN,kernel) # erode + dilate
 
     cv2.imshow("erosion", erosion)
 
@@ -83,11 +93,18 @@ while (1):
             delay = 0
             estado = 'fin'
 
+    #watchdog
+    if esperando >= 1500:
+        estado = 'lanzar'
+        esperando = 0
+
+
     if estado == 'esperando':
         esperando = esperando + 1
         if esperando >=  10:
             print 'esperando...'
             estado = 'hanpicado'
+
 
     if estado == 'lanzar':
         print "LANZAAAAAAAAAAAAA"
