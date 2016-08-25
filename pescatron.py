@@ -2,12 +2,23 @@ import cv2
 import numpy as np
 import autopy
 
+# ------- CONFIG --------------------
+
+# -- Pesca en Lava/Agua
+lava = True
+# lava = False
+
+imshow_on = True
+# imshow_on = False
+
+# -----------------------------------
+
 image = autopy.bitmap.capture_screen()
 image = image.get_portion([660, 200], [600, 300])
 h = image.height
 w = image.width
 imgtest = np.zeros((h,w,3), np.uint8)
-cv2.namedWindow("image")
+
 c = 0
 
 # # general
@@ -18,11 +29,15 @@ c = 0
 # lower_red = np.array([5,5,5])
 # upper_red = np.array([175,255,255])
 
-# enh
-lower_red_1 = np.array([169,85,85])
+# enhanced
+lower_red_1 = np.array([168,65,65])
 upper_red_1 = np.array([180,230,230])
-lower_red_2 = np.array([0,85,85])
-upper_red_2 = np.array([11,230,230])
+lower_red_2 = np.array([0,65,65])
+upper_red_2 = np.array([12,230,230])
+
+# lava params
+lower_blue = np.array([106,40,40])
+upper_blue = np.array([131,230,230])
 
 estado = 'inicio'
 esperando = 0
@@ -36,12 +51,17 @@ while (1):
     nombre = 'imagen'+'.png'
     image.save(nombre)
     img = cv2.imread('imagen.png')
-    cv2.imshow("image", img)
+    if imshow_on: cv2.imshow("capture", img)
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    mask2 = cv2.bitwise_or(cv2.inRange(hsv, lower_red_1, upper_red_1),cv2.inRange(hsv, lower_red_2, upper_red_2))
-    cv2.imshow("mask", mask2)
+    if lava == True:
+        mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
+    else:
+        mask2 = cv2.bitwise_or(cv2.inRange(hsv, lower_red_1, upper_red_1),cv2.inRange(hsv, lower_red_2, upper_red_2))
+
+
+    if imshow_on: cv2.imshow("masked", mask2)
 
     if c == 1 and estado == 'inicio':
         img2 = mask2
@@ -56,7 +76,7 @@ while (1):
     erosion = cv2.erode(resta,kernel,iterations = 1) # old
     # erosion = cv2.morphologyEx(resta,cv2.MORPH_OPEN,kernel) # erode + dilate
 
-    cv2.imshow("erosion", erosion)
+    if imshow_on: cv2.imshow("movement", erosion)
 
     img2 = mask2
 
