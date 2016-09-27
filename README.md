@@ -1,7 +1,9 @@
-# Bot pesquero Wow
+# Pescatron
 
-El bot más chapucero jamás creado. Toma screenshots para localizar la bolla y está escrito en python nivel -1.
+Programilla escrito en python nivel -1. Facilita el proceso de pesca en Wow, detectando la posición de la bolla.
 
-Se utiliza autopy para ss y acciones del ratón y opencv para tratar las imagenes.
+Esta script ha sido creada con fines de aprendizaje y nunca deberá ser utilizada para automatizar el proceso completo.
+
+Se utiliza autopy para screenshots y acciones del ratón, Opencv para tratar las imágenes.
 
 * habrá imshows y prints de desarrollo.. U-.-

@@ -5,11 +5,11 @@ import autopy
 # ------- CONFIG --------------------
 
 # -- Pesca en Lava/Agua
-lava = True
-# lava = False
-
-imshow_on = True
-# imshow_on = False
+# lava = True
+lava = False
+#
+# imshow_on = True
+imshow_on = False
 
 # -----------------------------------
 
@@ -27,20 +27,21 @@ c = 0
 
 # # nag
 # lower_red = np.array([5,5,5])
-# upper_red = np.array([175,255,255])
+# upper_red = np.array([175,b255,255])
 
 # enhanced
-lower_red_1 = np.array([168,65,65])
-upper_red_1 = np.array([180,230,230])
+lower_red_1 = np.array([168,65,65])  # Old 65<x<230
+upper_red_1 = np.array([180,250,250])
 lower_red_2 = np.array([0,65,65])
-upper_red_2 = np.array([12,230,230])
+upper_red_2 = np.array([12,250,250])
 
 # lava params
 lower_blue = np.array([106,40,40])
-upper_blue = np.array([131,230,230])
+upper_blue = np.array([131,253,253])
 
 estado = 'inicio'
 esperando = 0
+wd = 0
 
 while (1):
 
@@ -80,10 +81,12 @@ while (1):
 
     img2 = mask2
 
+    print estado, wd
+
     if sum(sum(erosion)) >= 2000:
 
         if estado == 'salvacords':
-
+            wd = 0
             repe = 0
             indexf = 300
             indexc = 150
@@ -94,11 +97,11 @@ while (1):
                     else:
                         repe = 0
 
-                    if repe >= 5:
+                    if repe >= 4:
                         posx = 660+indexf
                         posy = 200+indexc
                         break
-                if repe >= 5:
+                if repe >= 4:
                     break
 
             print "Salvando posicion en ", posx, posy
@@ -106,18 +109,21 @@ while (1):
             estado = 'esperando'
 
         if estado == 'hanpicado':
+            wd = 0
             autopy.mouse.move(posx, posy)
             cv2.waitKey(20)
             autopy.mouse.click(autopy.mouse.RIGHT_BUTTON)
             print "Pilla pilla en posicion guardada"
             delay = 0
             estado = 'fin'
-
-    #watchdog
-    if esperando >= 1500:
-        estado = 'lanzar'
-        esperando = 0
-
+    else:
+        #watchdog
+        if estado == 'hanpicado' or estado == 'salvacords':
+            wd = wd + 1
+            if wd >= 180:
+                estado = 'lanzar'
+                esperando = 0
+                wd = 0
 
     if estado == 'esperando':
         esperando = esperando + 1
