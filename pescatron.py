@@ -15,7 +15,7 @@ imshow_on = True
 
 offset = 0
 image = autopy.bitmap.capture_screen()
-image = image.get_portion([660+offset, 200], [600, 300])
+image = image.get_portion([660 + offset, 200], [600, 300])
 h = image.height
 w = image.width
 imgtest = np.zeros((h, w, 3), np.uint8)
@@ -31,26 +31,26 @@ c = 0
 # upper_red = np.array([175,b255,255])
 
 # enhanced
-lower_red_1 = np.array([168,65,65])  # Old 65<x<230
-upper_red_1 = np.array([180,250,250])
-lower_red_2 = np.array([0,65,65])
-upper_red_2 = np.array([12,250,250])
+lower_red_1 = np.array([168, 65, 65])  # Old 65<x<230
+upper_red_1 = np.array([180, 250, 250])
+lower_red_2 = np.array([0, 65, 65])
+upper_red_2 = np.array([12, 250, 250])
 
 # lava params
-lower_blue = np.array([106,40,40])
-upper_blue = np.array([131,253,253])
+lower_blue = np.array([106, 40, 40])
+upper_blue = np.array([131, 253, 253])
 
 estado = 'inicio'
 esperando = 0
 wd = 0
 
-while(1):
+while (1):
 
-    c = c+1
+    c = c + 1
 
     image = autopy.bitmap.capture_screen()
-    image = image.get_portion([660+offset, 200], [600, 300])
-    nombre = 'imagen'+'.png'
+    image = image.get_portion([660 + offset, 200], [600, 300])
+    nombre = 'imagen' + '.png'
     image.save(nombre)
     img = cv2.imread('imagen.png')
     if imshow_on: cv2.imshow("capture", img)
@@ -60,8 +60,7 @@ while(1):
     if lava == True:
         mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
     else:
-        mask2 = cv2.bitwise_or(cv2.inRange(hsv, lower_red_1, upper_red_1),cv2.inRange(hsv, lower_red_2, upper_red_2))
-
+        mask2 = cv2.bitwise_or(cv2.inRange(hsv, lower_red_1, upper_red_1), cv2.inRange(hsv, lower_red_2, upper_red_2))
 
     if imshow_on: cv2.imshow("masked", mask2)
 
@@ -70,12 +69,12 @@ while(1):
         print "Iniciando... 3 segundos..."
         estado = 'lanzar'
         cv2.waitKey(3000)
-        autopy.mouse.move(660+600+offset, 200+300)
+        autopy.mouse.move(660 + 600 + offset, 200 + 300)
 
-    resta = mask2-img2 # old
+    resta = mask2 - img2  # old
 
-    kernel = np.ones((3,3),np.uint8)   # OLD 3x3
-    erosion = cv2.erode(resta,kernel,iterations = 1) # old
+    kernel = np.ones((3, 3), np.uint8)  # OLD 3x3
+    erosion = cv2.erode(resta, kernel, iterations=1)  # old
     # erosion = cv2.morphologyEx(resta,cv2.MORPH_OPEN,kernel) # erode + dilate
 
     if imshow_on: cv2.imshow("movement", erosion)
@@ -91,7 +90,7 @@ while(1):
             repe = 0
             indexf = 300
             indexc = 150
-            for indexc in range(len(resta)) :
+            for indexc in range(len(resta)):
                 for indexf, item in enumerate(resta[indexc]):
                     if item == 255:
                         repe = repe + 1
@@ -99,8 +98,8 @@ while(1):
                         repe = 0
 
                     if repe >= 4:
-                        posx = 660+indexf+offset
-                        posy = 200+indexc
+                        posx = 660 + indexf + offset
+                        posy = 200 + indexc
                         break
                 if repe >= 4:
                     break
@@ -118,7 +117,7 @@ while(1):
             delay = 0
             estado = 'fin'
     else:
-        #watchdog
+        # watchdog
         if estado == 'hanpicado' or estado == 'salvacords':
             wd = wd + 1
             if wd >= 180:
@@ -128,10 +127,9 @@ while(1):
 
     if estado == 'esperando':
         esperando = esperando + 1
-        if esperando >=  10:
+        if esperando >= 10:
             print 'esperando...'
             estado = 'hanpicado'
-
 
     if estado == 'lanzar':
         print "LANZAAAAAAAAAAAAA"
@@ -142,9 +140,8 @@ while(1):
         print "esperando para lanzar"
         delay = delay + 1
         if delay == 10:
-            autopy.mouse.move(660+offset+600, 200+300)
+            autopy.mouse.move(660 + offset + 600, 200 + 300)
         if delay >= 20:
             estado = 'lanzar'
 
     cv2.waitKey(50)
-
