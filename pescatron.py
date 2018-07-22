@@ -9,15 +9,16 @@ import autopy
 lava = False
 #
 # imshow_on = True
-imshow_on = False
+imshow_on = True
 
 # -----------------------------------
 
+offset = 0
 image = autopy.bitmap.capture_screen()
-image = image.get_portion([660, 200], [600, 300])
+image = image.get_portion([660+offset, 200], [600, 300])
 h = image.height
 w = image.width
-imgtest = np.zeros((h,w,3), np.uint8)
+imgtest = np.zeros((h, w, 3), np.uint8)
 
 c = 0
 
@@ -43,12 +44,12 @@ estado = 'inicio'
 esperando = 0
 wd = 0
 
-while (1):
+while(1):
 
     c = c+1
 
     image = autopy.bitmap.capture_screen()
-    image = image.get_portion([660, 200], [600, 300])
+    image = image.get_portion([660+offset, 200], [600, 300])
     nombre = 'imagen'+'.png'
     image.save(nombre)
     img = cv2.imread('imagen.png')
@@ -69,7 +70,7 @@ while (1):
         print "Iniciando... 3 segundos..."
         estado = 'lanzar'
         cv2.waitKey(3000)
-        autopy.mouse.move(660+600, 200+300)
+        autopy.mouse.move(660+600+offset, 200+300)
 
     resta = mask2-img2 # old
 
@@ -98,7 +99,7 @@ while (1):
                         repe = 0
 
                     if repe >= 4:
-                        posx = 660+indexf
+                        posx = 660+indexf+offset
                         posy = 200+indexc
                         break
                 if repe >= 4:
@@ -141,7 +142,7 @@ while (1):
         print "esperando para lanzar"
         delay = delay + 1
         if delay == 10:
-            autopy.mouse.move(660+600, 200+300)
+            autopy.mouse.move(660+offset+600, 200+300)
         if delay >= 20:
             estado = 'lanzar'
 
